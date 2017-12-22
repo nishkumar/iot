@@ -14,6 +14,14 @@
  int arrayLength = 0;
  int colorIndex = 0;
 
+ // Event status variables
+ bool buttonPressed = false;
+ bool eventPublished = false;
+
+// LED colors
+ const int STATUS_FAILURE = 0;
+ const int STATUS_SUCCESS = 1;
+ int statusColor[][3] = {{250, 0, 0}, {0, 250, 0}};
  int colorArray[][3] = {{0, 0, 250}, {0, 25, 225}, {0, 50, 200}, {0, 75, 175},
                         {0, 100, 150}, {0, 125, 125}, {0, 150, 100}, {0, 175, 75},
                         {0, 200, 50}, {0, 225, 25}, {0, 250, 0}, {25, 225, 0},
@@ -54,6 +62,29 @@
 
 
  /*
+ * Description: Turn-on LEDS to indicate status
+ */
+ void showStatus(int cIndex){
+       // Handle index out of range
+       int maxIndex = sizeof(colorArray)/sizeof(statusColor[0]);
+       if(colorIndex > maxIndex)
+          cIndex = 0;
+
+       b.ledOn(1, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(2, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(3, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(4, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(5, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(6, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(7, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(8, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(9, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       b.ledOn(10, statusColor[cIndex][0], statusColor[cIndex][1], statusColor[cIndex][2]);
+       delay(300);
+ }
+
+
+ /*
  * Description: Function to turn-on LEDS
  */
  void showLedPulse(int colorIndex){
@@ -69,14 +100,31 @@
        b.ledOn(10, colorArray[colorIndex][0], colorArray[colorIndex][1], colorArray[colorIndex][2]);
  }
 
-
  void loop(){
      // Pulse LEDs if a button is pressed
       if (b.buttonOn(1) || b.buttonOn(2) || b.buttonOn(3) || b.buttonOn(4)) {
+        buttonPressed = true;
         colorIndex = (colorIndex + 1) % arrayLength;
-        showLedPulse(colorIndex);
-        delay(300);
+
+        // User feedback on event success
+        if(eventPublished){
+          showLedPulse(colorIndex);
+          delay(300);
+        }
       }else{
+        buttonPressed = false;
+        eventPublished = false;
         allOff();
       }
+
+      // Send event notification to particle cloud
+      if(buttonPressed && !eventPublished){
+          bool success = Particle.publish("coffee-ready");
+          if(success){
+            eventPublished = true;
+          }else{
+            eventPublished = false;
+          }
+      }
+
  }
