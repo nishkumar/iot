@@ -1,13 +1,13 @@
 # play-tunes
 
-A Particle project named play-tunes
+The play tunes application shows how to use the onboard speaker on the internet button to play notes. When any of the buttons are pressed the LEDS are turned on and the programmed tune is played.
 
 ## Welcome to your project!
 
 Every new Particle project is composed of 3 important elements that you'll see have been created in your project directory for play-tunes.
 
 #### ```/src``` folder:  
-This is the source folder that contains the firmware files for your project. It should *not* be renamed. 
+This is the source folder that contains the firmware files for your project. It should *not* be renamed.
 Anything that is in this folder when you compile your project will be sent to our compile service and compiled into a firmware binary for the Particle device that you have targeted.
 
 If your application contains multiple files, they should all be included in the `src` folder. If your firmware depends on Particle libraries, those dependencies are specified in the `project.properties` file referenced below.
